@@ -23,3 +23,12 @@ $factory->define(App\User::class, function (Faker $faker) {
         'remember_token' => str_random(10),
     ];
 });
+
+$factory->define(App\Thread::class, function (Faker $faker) {
+
+    return [
+        'user_id' => factory('App\User')->create()->id,
+        'title' => $faker->sentence,
+        'body' =>  $faker->paragraph 
+    ];
+});
