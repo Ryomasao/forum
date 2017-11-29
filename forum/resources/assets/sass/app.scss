@@ -1,9 +1,11 @@
 
-// Fonts
-@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+//npm install normalize.css　でインストールしたものを読み込む
+@import "~normalize.css";
+//共通で使える変数はここに書く
+@import "components/variables";
+//Threadページはここに書く
+@import "components/thread";
 
-// Variables
-@import "variables";
-
-// Bootstrap
-@import "~bootstrap-sass/assets/stylesheets/bootstrap";
+body{
+    font-family: "Sawarabi Gothic";
+}

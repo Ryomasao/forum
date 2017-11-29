@@ -1,0 +1,15 @@
+
+//threadの一覧をwrapするクラス
+.threads{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+//threadそのもの
+.thread{
+    margin: 10px;
+    background: $mainColor;
+    color:$subColor;
+    width: 300px;
+    height: 350px;
+}
