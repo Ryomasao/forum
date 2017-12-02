@@ -1,0 +1,54 @@
+
+.justfy-center{
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.form{
+    border: solid 1px $mainColor;
+    background-color: $mainColor;
+    color:$subColor;
+    border-radius: 4px;
+    padding:30px;
+
+    &-header{
+        text-align: center;
+    }
+
+    &-group{
+        display: flex;
+        margin-top:10px;
+        align-items: center;
+
+        label{
+            width:100px;
+        }
+
+        input{
+            border: 1px solid $mainColor;
+            background: $inputColor;
+            border-radius: 4px;
+            padding:20px;
+            color:$subColor;
+        }
+
+        textarea{
+            border: 1px solid $mainColor;
+            background: $inputColor;
+            border-radius: 4px;
+            color:$subColor;
+        }
+
+        button{
+            margin-left:auto;
+            padding:10px;
+            border: 1px solid $subColor;
+            background: $mainColor;
+            border-radius: 4px;
+            color:$subColor;
+        }
+    }
+}
