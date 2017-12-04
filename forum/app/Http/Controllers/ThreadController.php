@@ -6,12 +6,10 @@ use App\Thread;
 use App\Http\Requests\ThreadRequest;
 use Illuminate\Support\Facades\Log;
 
-
 class ThreadController extends Controller
 {
     public function index(Thread $thread)
     {
-        Log::info("Hello");
         $threads = $thread->all();
         return view('thread.index', compact('threads'));
     }
@@ -23,6 +21,7 @@ class ThreadController extends Controller
 
     public function create()
     {
+        //Log::debug("I'm ThreadController@create");
         return view('thread.create');
     }
 

@@ -12,7 +12,7 @@ Route::get('/thread', 'ThreadController@index');
 Route::get('/thread/create', 'ThreadController@create');
 
 //Threadを投稿する
-Route::post('/thread', 'ThreadController@store');
+Route::post('/thread', 'ThreadController@store')->middleware('seesession');
 
 //Threadを表示する
 Route::get('/thread/{thread}', 'ThreadController@show');

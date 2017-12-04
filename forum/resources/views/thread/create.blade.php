@@ -12,6 +12,11 @@
             <label for="body">本文</label>
             <textarea name="body" rows="10" cols="50"></textarea>
         </div>
+        <div class="errors">
+            @if($errors->has('body'))
+                <p> {{ $errors->first('body') }} </p>
+            @endif
+        </div>
         <div class="form-group">
             <label for="user_id">ユーザーID</label>
             <input type="text" name="user_id" placeholder="とりあえずの実装">

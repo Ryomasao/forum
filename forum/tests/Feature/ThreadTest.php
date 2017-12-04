@@ -76,7 +76,7 @@ class ThreadTest extends TestCase
     }
 
     /**
-     * （本当はログインした）ユーザは、Threadを作成することができる。
+     * Thread投稿時にtitleが未入力だとValidationError
      *
      * @return void
      */
@@ -89,6 +89,23 @@ class ThreadTest extends TestCase
         $this->post('/thread', $thread->toArray())
         //バリデーションに引っかかって、セッションに'title'というキーでエラーが書かれる
              ->assertSessionHasErrors('title');
+        
+    }
+
+    /**
+     * Thread投稿時にtitleが未入力だとValidationError
+     *
+     * @return void
+     */
+    public function test_thread_require_body()
+    {
+        //titleがnullのThreadがあって
+        $thread = factory('App\Thread')->make(['body' => null]);
+
+        //Threadを表示するURLにアクセスすると、threadを作成しようとして
+        $this->post('/thread', $thread->toArray())
+        //バリデーションに引っかかって、セッションに'title'というキーでエラーが書かれる
+             ->assertSessionHasErrors('body');
         
     }
 }
