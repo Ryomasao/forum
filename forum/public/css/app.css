@@ -525,25 +525,32 @@ template {
   padding: 30px;
 }
 
-.form-header {
+.form__header {
   text-align: center;
 }
 
-.form-group {
+.form__row {
+  padding: 20px 0;
+}
+
+.form__input {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  margin-top: 10px;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
 }
 
-.form-group label {
+.form__title {
   width: 100px;
 }
 
-.form-group input {
+.form__controls {
+  width: 600px;
+}
+
+.form__control {
   border: 1px solid #8EC0E4;
   background: #D4DFE6;
   border-radius: 4px;
@@ -551,20 +558,16 @@ template {
   color: #383a3f;
 }
 
-.form-group textarea {
-  border: 1px solid #8EC0E4;
-  background: #D4DFE6;
-  border-radius: 4px;
-  color: #383a3f;
+.form__error {
+  color: red;
 }
 
-.form-group button {
-  margin-left: auto;
-  padding: 10px;
-  border: 1px solid #383a3f;
-  background: #8EC0E4;
-  border-radius: 4px;
-  color: #383a3f;
+.form__notify {
+  padding: 20px 10px;
+}
+
+.form__footer {
+  text-align: right;
 }
 
 html,
