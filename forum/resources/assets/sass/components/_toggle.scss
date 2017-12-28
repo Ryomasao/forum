@@ -1,0 +1,16 @@
+.toggle{
+    color:white;
+
+    //
+    &__left{
+        border: 1px solid white;
+    }
+
+    &__right{
+        border: 1px solid white;
+    }
+
+    &__radio{
+        display: none;
+    }
+}

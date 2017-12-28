@@ -1,0 +1,14 @@
+
+.content-header{
+    width: 100%;
+    height: $headerHeight;
+    position: fixed;
+    top:0;
+    background: $subColor; 
+    display: flex;
+    justify-content: flex-end;
+
+    &__item{
+        margin:10px;
+    }
+}

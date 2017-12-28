@@ -11,6 +11,9 @@ Route::get('/thread', 'ThreadController@index');
 //Threadを投稿するページを表示する
 Route::get('/thread/create', 'ThreadController@create');
 
+//Threadを投稿するページを表示する(ajax)
+Route::get('/thread/create_ajax', 'ThreadController@create_ajax');
+
 //Threadを投稿する
 Route::post('/thread', 'ThreadController@store')->middleware('seesession');
 

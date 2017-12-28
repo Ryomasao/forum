@@ -25,12 +25,33 @@ class ThreadController extends Controller
         return view('thread.create');
     }
 
+    /**
+     * 
+     */
+    public function create_ajax()
+    {
+        Log::debug("I'm ThreadController@create_ajax");
+        return view('thread.create_ajax');
+    }
+
     public function store(ThreadRequest $request, Thread $thread)
     {
 
-        $thread->create($request->all());
 
-        return redirect('/thread');
+        Log::debug("I'm ThreadController@store");
+
+        $title = $request->title;
+        $body = $request->body;
+        $user_id = 1;
+
+        $thread->create([
+            'title' => $title,
+            'body' => $body,
+            'user_id' => $user_id,
+        ]);
+
+        //return redirect('/thread');
+        return 'success!';
     }
     
 }

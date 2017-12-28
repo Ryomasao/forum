@@ -3,10 +3,16 @@
 @import "~normalize.css";
 //共通で使える変数はここに書く
 @import "components/variables";
+//hedaer
+@import "components/content-header";
+//トグルボタン
+@import "components/toggle";
 //Threadの素材はここに書く
 @import "components/thread";
 //Threadの素材はここに書く
 @import "components/form";
+//Threadの素材はここに書く
+@import "components/simple-form";
 
 html,body{
     width: 100%;
@@ -17,5 +23,9 @@ html,body{
 body{
     font-family: "Sawarabi Gothic";
     background: #6AAFE6;
+}
+
+.container{
+    margin-top: $headerHeight;
 }
 
