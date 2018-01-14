@@ -20,3 +20,10 @@ Route::post('/thread', 'ThreadController@store')->middleware('seesession');
 //Threadを表示する
 Route::get('/thread/{thread}', 'ThreadController@show');
 
+Route::get('/sample', function(){
+    return 'ohanky!';
+});
+
+Route::get('/other', function(){
+    return 'buhiii!';
+});

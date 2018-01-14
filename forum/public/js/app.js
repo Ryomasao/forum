@@ -963,199 +963,27 @@ module.exports = Cancel;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(10);
-module.exports = __webpack_require__(42);
+module.exports = __webpack_require__(43);
 
 
 /***/ }),
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
+ * Laravelが用意してくれているセットアップ
  */
-
 __webpack_require__(11);
+var Form = __webpack_require__(35);
+var ReadFile = __webpack_require__(38);
+var Xhr = __webpack_require__(48);
 
-window.Vue = __webpack_require__(35);
-
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-
-Vue.component('example-component', __webpack_require__(38));
-
-var drop = Vue.extend({
-    template: '\n            <div class="drop">\n                <input class="drop__input" id="file" type="file" name="file" v-on:drop.prevent="dropFile"  v-on:dragover.prevent v-on:change="dropFile">\n                <label class="drop__button" for="file" >\u9078\u629E</label> \n            </div>\n    ',
-    methods: {
-        dropFile: function dropFile(event) {
-            var fileList = event.dataTransfer.files;
-            console.log("drop");
-            console.log(fileList[0]);
-        }
-    }
-});
-
-/**
- * フォームクラスだよ！
- */
-
-var Form = function () {
-    function Form(data) {
-        _classCallCheck(this, Form);
-
-        //フォームのデータ 
-        this.originalData = data;
-
-        //dataの各要素をFormクラスのプロパティとして登録する
-        for (var field in this.originalData) {
-            this[field] = this.originalData[field];
-        }
-
-        //エラー情報を管理するプロパティ
-        this.errors = new Errors();
-    }
-
-    /**
-     * Formのデータをサーバーに送信するよ！
-     */
-
-
-    _createClass(Form, [{
-        key: 'submit',
-        value: function submit() {
-            var _this = this;
-
-            //プロパティの値を再設定する
-            for (var field in this.originalData) {
-                this.originalData[field] = this[field];
-            }
-
-            axios.post('/thread', this.originalData)
-            //HTTPリクエストが成功したとき
-            .then(function (response) {
-                return _this.onSuccess(response.data);
-            })
-            //HTTPリクエエストが失敗した時
-            .catch(function (error) {
-                return _this.onFail(error.response.data.errors);
-            });
-        }
-
-        /**
-         * フォームデータの送信が成功した場合
-         */
-
-    }, {
-        key: 'onSuccess',
-        value: function onSuccess(response) {
-            console.log(response);
-        }
-
-        /**
-         * フォームデータの送信が失敗した場合
-         */
-
-    }, {
-        key: 'onFail',
-        value: function onFail(error) {
-            this.errors.record(error);
-        }
-    }]);
-
-    return Form;
-}();
-
-/**
- * エラー情報を管理するクラスだよ！
- */
-
-
-var Errors = function () {
-    function Errors() {
-        _classCallCheck(this, Errors);
-
-        //エラー情報を管理するプロパティ
-        console.log("im created");
-        this.errors = {};
-    }
-
-    /**
-     * @param {*} errors :axiosのerror.response.data、つまりエラー時のレスポンスのbodyが入るんだよ
-     */
-
-
-    _createClass(Errors, [{
-        key: 'record',
-        value: function record(errors) {
-            this.errors = errors;
-        }
-
-        /**
-         * レスポンスデータのbody部分のエラーメッセージを返すよ
-         *
-         * @param {*} name :string コントロールの名前
-         * @returns {string}
-         */
-
-    }, {
-        key: 'get',
-        value: function get(field) {
-            if (this.errors[field]) {
-                return this.errors[field][0];
-            }
-        }
-
-        /**
-         * 
-         * @param {*} field 
-         * @returns {boolean}
-         */
-
-    }, {
-        key: 'has',
-        value: function has(field) {
-            return this.errors.hasOwnProperty(field);
-
-            /*
-            console.log(this.errors.errors.hasOwnProperty('title'));
-             if(Object.keys(this.errors).length === 0){
-                console.log("nothing");
-                return false;
-            }else{
-                console.log("exists");
-                return true;
-            }
-             */
-        }
-
-        /**
-         * filedで指定されたプロパティを削除する 
-         * @param {string} field 
-         */
-
-    }, {
-        key: 'clear',
-        value: function clear(field) {
-            delete this.errors[field];
-        }
-    }]);
-
-    return Errors;
-}();
+window.Vue = __webpack_require__(40);
 
 var app = new Vue({
     el: '.simple-form',
     data: {
-        //test
-        target: '',
         form: new Form({
             title: '',
             body: '',
@@ -1165,31 +993,48 @@ var app = new Vue({
     methods: {
         //Formのsubmitイベントが発生したとき
         onSubmit: function onSubmit() {
-            this.form.submit();
+            //this.form.submit();
+            this.form.push();
         },
-        //titleの値を変えてみる(あとで消す)
-        get: function get() {
-            console.log(this.target);
-            console.log(this.form.file);
-            var data = new FormData({
-                file: this.form.file
-            });
-            axios.get(this.target);
-        },
-        //titleの値を変えてみる(あとで消す)
-        post: function post() {
-            axios.put(this.target, 'hello');
-        },
-        xhr: function xhr() {
-            var xhr = new XMLHttpRequest();
-            fd = new FormData();
-            xhr.open('PUT', this.target, true);
-            xhr.send(fd);
-        }
+        //ファイルを選択またはドロップ
+        onDrop: function onDrop(event) {
+            //ファイルを取得
+            var file = event.target.files[0];
 
-    },
-    components: {
-        drop: drop
+            /// GET /sample1 した後の処理を書く
+            var callbackAfterRequest = function callbackAfterRequest() {
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "/other");
+                xhr.send();
+
+                //リクエストを受信したときのイベント
+                xhr.onload = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        console.log(xhr.responseText);
+                    }
+                };
+            };
+
+            //ReadFile.jsの中でやってほしいことを書く
+            var callback = function callback(text) {
+                //ファイルの中の「おはんき」の出現回数を数える
+                var count = (text.match(new RegExp('おはんき', 'g')) || []).length;
+
+                //チェックがOKだったら
+                if (count > 0) {
+                    //サーバーにリクエストを飛ばす
+                    //リクエストが成功した後の処理を書く
+                    Xhr(callbackAfterRequest);
+                }
+            };
+
+            //定義した関数を渡す
+            var text = ReadFile(file, callback);
+
+            console.log(text);
+        },
+        onDrop2: function onDrop2(event) {}
+
     }
 });
 
@@ -31908,6 +31753,264 @@ module.exports = function spread(callback) {
 /* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Errors = __webpack_require__(36);
+
+var Time = __webpack_require__(37);
+
+/**
+ * フォームクラスだよ!
+ */
+module.exports = function () {
+    function Form(data) {
+        _classCallCheck(this, Form);
+
+        //フォームのデータ 
+        this.originalData = data;
+
+        //dataの各要素をFormクラスのプロパティとして登録する
+        for (var field in this.originalData) {
+            this[field] = this.originalData[field];
+        }
+
+        //エラー情報を管理するプロパティ
+        this.errors = new Errors();
+    }
+
+    /**
+     * Formのデータをサーバーに送信するよ！
+     */
+
+
+    _createClass(Form, [{
+        key: 'submit',
+        value: function submit() {
+            var _this = this;
+
+            //プロパティの値を再設定する
+            for (var field in this.originalData) {
+                this.originalData[field] = this[field];
+            }
+            axios.post('/thread', this.originalData)
+            //HTTPリクエストが成功したとき
+            .then(function (response) {
+                return _this.onSuccess(response.data);
+            })
+            //HTTPリクエエストが失敗した時
+            .catch(function (error) {
+                return _this.onFail(error.response.data.errors);
+            });
+        }
+    }, {
+        key: 'push',
+        value: function push() {
+
+            /**
+             * だめなパターン
+             */
+
+            setTimeout(function () {
+                console.log('洗剤を買いに行く');
+            }, 3000);
+
+            setTimeout(function () {
+                console.log('洗濯機を回す');
+            }, 1000);
+
+            setTimeout(function () {
+                console.log('洗濯ものを干す');
+            }, 2000);
+
+            var time = new Time();
+            //非同期処理
+            //time.general(this.afterGeneral);
+
+            /*
+            time.general(
+                function () {
+                   setTimeout(function(){
+                       console.log('after General');
+                       setTimeout(function(){
+                            console.log('after after General');
+                       },1000)
+                   },1000) 
+                }
+            );
+            */
+            console.log('we wish  after hello  but it isnt');
+        }
+    }, {
+        key: 'afterGeneral',
+        value: function afterGeneral(callback) {
+            console.log('after General');
+            //callback();
+        }
+    }, {
+        key: 'afterAfterGeneral',
+        value: function afterAfterGeneral() {
+            console.log('after after General');
+        }
+
+        /**
+         * フォームデータの送信が成功した場合
+         */
+
+    }, {
+        key: 'onSuccess',
+        value: function onSuccess(response) {
+            //エラーの情報をクリア
+            this.errors.reset();
+        }
+
+        /**
+         * フォームデータの送信が失敗した場合
+         */
+
+    }, {
+        key: 'onFail',
+        value: function onFail(error) {
+            this.errors.record(error);
+        }
+    }]);
+
+    return Form;
+}();
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports) {
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * エラー情報を管理するクラスだよ！
+ */
+module.exports = function () {
+  function Errors() {
+    _classCallCheck(this, Errors);
+
+    //エラー情報を管理するプロパティ
+    this.errors = {};
+  }
+
+  /**
+   * @param {*} errors :axiosのerror.response.data、つまりエラー時のレスポンスのbodyを設定するんだよ
+   */
+
+
+  _createClass(Errors, [{
+    key: "record",
+    value: function record(errors) {
+      this.errors = errors;
+    }
+
+    /**
+     * レスポンスデータのbody部分のエラーメッセージを返すよ
+     *
+     * @param {*} name :string コントロールの名前
+     * @returns {string}
+     */
+
+  }, {
+    key: "get",
+    value: function get(field) {
+      if (this.errors[field]) {
+        return this.errors[field][0];
+      }
+    }
+
+    /**
+     * エラークラスにfieldにセットされたエラーがあるか調べるよ
+     * @param {*} field 
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "has",
+    value: function has(field) {
+      return this.errors.hasOwnProperty(field);
+    }
+
+    /**
+     * filedで指定されたプロパティを削除するよ　
+     * @param {string} field 
+     */
+
+  }, {
+    key: "clear",
+    value: function clear(field) {
+      delete this.errors[field];
+    }
+
+    /**
+     * エラー情報の要素を全部消すよ
+     */
+
+  }, {
+    key: "reset",
+    value: function reset() {
+      this.errors = {};
+    }
+  }]);
+
+  return Errors;
+}();
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports) {
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+module.exports = function () {
+  function Time() {
+    _classCallCheck(this, Time);
+  }
+
+  _createClass(Time, [{
+    key: 'general',
+    value: function general(callback) {
+      //これがファイルを読み込む非同期の関数だとする。
+      setTimeout(function () {
+        console.log('General');
+        callback();
+      }, 3000);
+    }
+  }]);
+
+  return Time;
+}();
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports) {
+
+module.exports = function (file, callback) {
+    var reader = new FileReader();
+
+    //読み込み終わったあとのイベント
+    reader.onload = function () {
+        text = reader.result;
+
+        //callbackを使う
+        callback(text);
+    };
+    //読み込み開始
+    reader.readAsText(file);
+};
+
+/***/ }),
+/* 39 */,
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global, setImmediate) {/*!
  * Vue.js v2.5.8
@@ -42601,10 +42704,10 @@ Vue$3.compile = compileToFunctions;
 
 module.exports = Vue$3;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(36).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(41).setImmediate))
 
 /***/ }),
-/* 36 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var apply = Function.prototype.apply;
@@ -42657,13 +42760,13 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(37);
+__webpack_require__(42);
 exports.setImmediate = setImmediate;
 exports.clearImmediate = clearImmediate;
 
 
 /***/ }),
-/* 37 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -42856,239 +42959,32 @@ exports.clearImmediate = clearImmediate;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(4)))
 
 /***/ }),
-/* 38 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(39)
-/* script */
-var __vue_script__ = __webpack_require__(40)
-/* template */
-var __vue_template__ = __webpack_require__(41)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/assets/js/components/ExampleComponent.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {  return key !== "default" && key.substr(0, 2) !== "__"})) {  console.error("named exports are not supported in *.vue files.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-7168fb6a", Component.options)
-  } else {
-    hotAPI.reload("data-v-7168fb6a", Component.options)
-' + '  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports) {
-
-/* globals __VUE_SSR_CONTEXT__ */
-
-// IMPORTANT: Do NOT use ES2015 features in this file.
-// This module is a runtime utility for cleaner component module output and will
-// be included in the final webpack user bundle.
-
-module.exports = function normalizeComponent (
-  rawScriptExports,
-  compiledTemplate,
-  functionalTemplate,
-  injectStyles,
-  scopeId,
-  moduleIdentifier /* server only */
-) {
-  var esModule
-  var scriptExports = rawScriptExports = rawScriptExports || {}
-
-  // ES6 modules interop
-  var type = typeof rawScriptExports.default
-  if (type === 'object' || type === 'function') {
-    esModule = rawScriptExports
-    scriptExports = rawScriptExports.default
-  }
-
-  // Vue.extend constructor export interop
-  var options = typeof scriptExports === 'function'
-    ? scriptExports.options
-    : scriptExports
-
-  // render functions
-  if (compiledTemplate) {
-    options.render = compiledTemplate.render
-    options.staticRenderFns = compiledTemplate.staticRenderFns
-    options._compiled = true
-  }
-
-  // functional template
-  if (functionalTemplate) {
-    options.functional = true
-  }
-
-  // scopedId
-  if (scopeId) {
-    options._scopeId = scopeId
-  }
-
-  var hook
-  if (moduleIdentifier) { // server build
-    hook = function (context) {
-      // 2.3 injection
-      context =
-        context || // cached call
-        (this.$vnode && this.$vnode.ssrContext) || // stateful
-        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
-      // 2.2 with runInNewContext: true
-      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
-        context = __VUE_SSR_CONTEXT__
-      }
-      // inject component styles
-      if (injectStyles) {
-        injectStyles.call(this, context)
-      }
-      // register component module identifier for async chunk inferrence
-      if (context && context._registeredComponents) {
-        context._registeredComponents.add(moduleIdentifier)
-      }
-    }
-    // used by ssr in case component is cached and beforeCreate
-    // never gets called
-    options._ssrRegister = hook
-  } else if (injectStyles) {
-    hook = injectStyles
-  }
-
-  if (hook) {
-    var functional = options.functional
-    var existing = functional
-      ? options.render
-      : options.beforeCreate
-
-    if (!functional) {
-      // inject component registration as beforeCreate hook
-      options.beforeCreate = existing
-        ? [].concat(existing, hook)
-        : [hook]
-    } else {
-      // for template-only hot-reload because in that case the render fn doesn't
-      // go through the normalizer
-      options._injectStyles = hook
-      // register for functioal component in vue file
-      options.render = function renderWithStyleInjection (h, context) {
-        hook.call(context)
-        return existing(h, context)
-      }
-    }
-  }
-
-  return {
-    esModule: esModule,
-    exports: scriptExports,
-    options: options
-  }
-}
-
-
-/***/ }),
-/* 40 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    mounted: function mounted() {
-        console.log('Component mounted.');
-    }
-});
-
-/***/ }),
-/* 41 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _vm._m(0, false, false)
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "container" }, [
-      _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col-md-8 col-md-offset-2" }, [
-          _c("div", { staticClass: "panel panel-default" }, [
-            _c("div", { staticClass: "panel-heading" }, [
-              _vm._v("Example Component")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "panel-body" }, [
-              _vm._v(
-                "\n                    I'm an example component!\n                "
-              )
-            ])
-          ])
-        ])
-      ])
-    ])
-  }
-]
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-7168fb6a", module.exports)
-  }
-}
-
-/***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 44 */,
+/* 45 */,
+/* 46 */,
+/* 47 */,
+/* 48 */
+/***/ (function(module, exports) {
+
+module.exports = function (callback) {
+     var xhr = new XMLHttpRequest();
+     xhr.open("GET", "/sample");
+     xhr.send();
+
+     //リクエストを受信したときのイベント
+     xhr.onload = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+               console.log(xhr.responseText);
+               callback();
+          }
+     };
+};
 
 /***/ })
 /******/ ]);
