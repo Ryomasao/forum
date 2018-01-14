@@ -1,13 +1,18 @@
-module.exports = function(file, callback){
-    let reader = new FileReader();
+module.exports = function(file){
+    return new Promise(function(resolve, reject){
+        let reader = new FileReader();
 
-    //読み込み終わったあとのイベント
-    reader.onload = function(){
-        text = reader.result
+        //読み込み終わったあとのイベント
+        reader.onload = function(){
+            let text = reader.result
 
-        //callbackを使う
-        callback(text)
-    }
-    //読み込み開始
-    reader.readAsText(file)
+            console.log('readEnd');
+            resolve(text);
+        }
+
+        //読み込み開始
+        console.log('readFile');
+        reader.readAsText(file)
+
+        })
 }

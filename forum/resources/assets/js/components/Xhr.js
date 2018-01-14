@@ -1,13 +1,16 @@
-module.exports = function(callback){
-     var xhr= new XMLHttpRequest();
-     xhr.open("GET","/sample");
-     xhr.send(); 
+module.exports = function(url){
+    return new Promise(function(resolve, reject){
+        var xhr= new XMLHttpRequest();
+        xhr.open("GET", url);
+        xhr.send(); 
 
-     //リクエストを受信したときのイベント
-     xhr.onload = function(){
-         if(xhr.readyState === 4 && xhr.status === 200) {
-             console.log(xhr.responseText);
-             callback();
-           }
-     };
+        //リクエストを受信したときのイベント
+        xhr.onload = function(){
+            if(xhr.readyState === 4 && xhr.status === 200) {
+                resolve(xhr.responseText);
+            }else{
+                reject('リクエストに失敗しているよ');
+            }
+        };
+    })
 }

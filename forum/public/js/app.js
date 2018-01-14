@@ -978,6 +978,7 @@ __webpack_require__(11);
 var Form = __webpack_require__(35);
 var ReadFile = __webpack_require__(38);
 var Xhr = __webpack_require__(48);
+var Validate = __webpack_require__(53);
 
 window.Vue = __webpack_require__(40);
 
@@ -1001,39 +1002,23 @@ var app = new Vue({
             //ファイルを取得
             var file = event.target.files[0];
 
-            /// GET /sample1 した後の処理を書く
-            var callbackAfterRequest = function callbackAfterRequest() {
-                var xhr = new XMLHttpRequest();
-                xhr.open("GET", "/other");
-                xhr.send();
-
-                //リクエストを受信したときのイベント
-                xhr.onload = function () {
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                        console.log(xhr.responseText);
-                    }
-                };
-            };
-
-            //ReadFile.jsの中でやってほしいことを書く
-            var callback = function callback(text) {
-                //ファイルの中の「おはんき」の出現回数を数える
-                var count = (text.match(new RegExp('おはんき', 'g')) || []).length;
-
-                //チェックがOKだったら
-                if (count > 0) {
-                    //サーバーにリクエストを飛ばす
-                    //リクエストが成功した後の処理を書く
-                    Xhr(callbackAfterRequest);
-                }
-            };
-
-            //定義した関数を渡す
-            var text = ReadFile(file, callback);
-
-            console.log(text);
-        },
-        onDrop2: function onDrop2(event) {}
+            //ファイル読み込み
+            ReadFile(file).then(function (text) {
+                //ファイルチェック
+                return Validate(text);
+            }).then(function () {
+                //サーバーリクエスト
+                return axios.get('/sample');
+            }).then(function (text) {
+                //サーバーリクエスト
+                console.log(text);
+                return axios.get('/other');
+            }).then(function (text) {
+                console.log(text);
+            }).catch(function (error) {
+                console.log(error);
+            });
+        }
 
     }
 });
@@ -31992,18 +31977,22 @@ module.exports = function () {
 /* 38 */
 /***/ (function(module, exports) {
 
-module.exports = function (file, callback) {
-    var reader = new FileReader();
+module.exports = function (file) {
+    return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
 
-    //読み込み終わったあとのイベント
-    reader.onload = function () {
-        text = reader.result;
+        //読み込み終わったあとのイベント
+        reader.onload = function () {
+            var text = reader.result;
 
-        //callbackを使う
-        callback(text);
-    };
-    //読み込み開始
-    reader.readAsText(file);
+            console.log('readEnd');
+            resolve(text);
+        };
+
+        //読み込み開始
+        console.log('readFile');
+        reader.readAsText(file);
+    });
 };
 
 /***/ }),
@@ -42972,18 +42961,43 @@ exports.clearImmediate = clearImmediate;
 /* 48 */
 /***/ (function(module, exports) {
 
-module.exports = function (callback) {
-     var xhr = new XMLHttpRequest();
-     xhr.open("GET", "/sample");
-     xhr.send();
+module.exports = function (url) {
+    return new Promise(function (resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url);
+        xhr.send();
 
-     //リクエストを受信したときのイベント
-     xhr.onload = function () {
-          if (xhr.readyState === 4 && xhr.status === 200) {
-               console.log(xhr.responseText);
-               callback();
-          }
-     };
+        //リクエストを受信したときのイベント
+        xhr.onload = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                resolve(xhr.responseText);
+            } else {
+                reject('リクエストに失敗しているよ');
+            }
+        };
+    });
+};
+
+/***/ }),
+/* 49 */,
+/* 50 */,
+/* 51 */,
+/* 52 */,
+/* 53 */
+/***/ (function(module, exports) {
+
+module.exports = function (text) {
+    return new Promise(function (resolve, reject) {
+        console.log('start');
+        var count = (text.match(new RegExp('おはんき', 'g')) || []).length;
+
+        //チェックがOKだったら
+        if (count > 0) {
+            resolve();
+        } else {
+            reject('ファイルの内容がおかしいよ');
+        }
+    });
 };
 
 /***/ })
