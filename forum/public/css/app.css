@@ -605,7 +605,7 @@ template {
 }
 
 .simple-form {
-  width: 400px;
+  width: 600px;
   border: 1px solid;
   border-radius: 3px;
 }
@@ -658,18 +658,6 @@ template {
   padding: 5px;
   margin: 10px;
   background: #8EC0E4;
-}
-
-.drop {
-  width: 50%;
-  border: 1px solid;
-  border-style: dashed;
-  border-radius: 3px;
-  padding: 30px;
-}
-
-.drop__input {
-  display: none;
 }
 
 .file {

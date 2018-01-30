@@ -20,6 +20,13 @@ Route::post('/thread', 'ThreadController@store')->middleware('seesession');
 //Threadを表示する
 Route::get('/thread/{thread}', 'ThreadController@show');
 
+//ファイルアップロード画面
+Route::get('/file/create', 'FileController@create');
+
+//ファイルアップロード画面
+Route::post('/file', 'FileController@store');
+
+
 Route::get('/sample', function(){
     return 'ohanky!';
 });

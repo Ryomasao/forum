@@ -177,6 +177,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        App\Providers\ImageServiceProvider::class,
+
         //S3のために追加
         Aws\Laravel\AwsServiceProvider::class,
 

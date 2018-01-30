@@ -1,5 +1,5 @@
 .simple-form{
-    width:400px;
+    width:600px;
     border: 1px solid;
     border-radius: 3px;
 
@@ -51,14 +51,3 @@
     }
 }
 
-
-.drop{
-    width: 50%;
-    border: 1px solid;
-    border-style: dashed;
-    border-radius: 3px;
-    padding: 30px;
-    &__input{
-        display: none;
-    }    
-}

@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 36);
+/******/ 	return __webpack_require__(__webpack_require__.s = 46);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -42621,375 +42621,695 @@ exports.clearImmediate = clearImmediate;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(4)))
 
 /***/ }),
-/* 36 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 36 */,
+/* 37 */,
+/* 38 */,
+/* 39 */,
+/* 40 */,
+/* 41 */,
+/* 42 */,
+/* 43 */,
+/* 44 */,
+/* 45 */
+/***/ (function(module, exports) {
 
-__webpack_require__(37);
-module.exports = __webpack_require__(44);
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function(useSourceMap) {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		return this.map(function (item) {
+			var content = cssWithMappingToString(item, useSourceMap);
+			if(item[2]) {
+				return "@media " + item[2] + "{" + content + "}";
+			} else {
+				return content;
+			}
+		}).join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+	var content = item[1] || '';
+	var cssMapping = item[3];
+	if (!cssMapping) {
+		return content;
+	}
+
+	if (useSourceMap && typeof btoa === 'function') {
+		var sourceMapping = toComment(cssMapping);
+		var sourceURLs = cssMapping.sources.map(function (source) {
+			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
+		});
+
+		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+	}
+
+	return [content].join('\n');
+}
+
+// Adapted from convert-source-map (MIT)
+function toComment(sourceMap) {
+	// eslint-disable-next-line no-undef
+	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
+	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
+
+	return '/*# ' + data + ' */';
+}
 
 
 /***/ }),
-/* 37 */
+/* 46 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(47);
+
+
+/***/ }),
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-/**
- * Laravelが用意してくれているセットアップ
- */
 __webpack_require__(9);
-var Form = __webpack_require__(38);
-var ReadFile = __webpack_require__(41);
-var Xhr = __webpack_require__(42);
-var Validate = __webpack_require__(43);
-
 window.Vue = __webpack_require__(33);
 
-var app = new Vue({
-    el: '.simple-form',
+//ファイル選択コンポーネント
+var Drop = __webpack_require__(48);
+
+new Vue({
+    el: '.form',
     data: {
-        form: new Form({
-            title: '',
-            body: '',
-            file: ''
-        })
+        //タイトル
+        title: '',
+        //ファイル
+        files: ''
     },
     methods: {
-        //Formのsubmitイベントが発生したとき
+        //ファイル送信処理
         onSubmit: function onSubmit() {
-            //this.form.submit();
-            this.form.push();
-        },
-        //ファイルを選択またはドロップ
-        onDrop: function onDrop(event) {
-            //ファイルを取得
-            var file = event.target.files[0];
+            console.log('test');
 
-            //ファイル読み込み
-            ReadFile(file).then(function (text) {
-                //ファイルチェック
-                return Validate(text);
-            }).then(function () {
-                //サーバーリクエスト
-                return axios.get('/sample');
-            }).then(function (text) {
-                //サーバーリクエスト
-                console.log(text);
-                return axios.get('/other');
-            }).then(function (text) {
-                console.log(text);
+            //送信データはFormDataを使うよ！
+            var data = new FormData();
+
+            //titleを追加
+            data.append('title', this.title);
+
+            //filesは複数ファイルを選択できる想定なのでループで追加するよ！
+            for (var i = 0; i < this.files.length; i++) {
+                data.append('files[]', this.files[i]);
+            }
+
+            //axiosでサーバーに送るよ！
+            axios.post('/file', data).then(function (response) {
+                console.log(response.data);
             }).catch(function (error) {
                 console.log(error);
             });
+        },
+        sendFile: function sendFile(files) {
+            this.files = files;
         }
 
+    },
+    components: {
+        'drop': Drop
     }
 });
 
 /***/ }),
-/* 38 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(49)
+}
+var normalizeComponent = __webpack_require__(53)
+/* script */
+var __vue_script__ = __webpack_require__(54)
+/* template */
+var __vue_template__ = __webpack_require__(55)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/drop.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {  return key !== "default" && key.substr(0, 2) !== "__"})) {  console.error("named exports are not supported in *.vue files.")}
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-685747f4", Component.options)
+  } else {
+    hotAPI.reload("data-v-685747f4", Component.options)
+' + '  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
 
-var Errors = __webpack_require__(39);
+module.exports = Component.exports
 
-var Time = __webpack_require__(40);
-
-/**
- * フォームクラスだよ!
- */
-module.exports = function () {
-    function Form(data) {
-        _classCallCheck(this, Form);
-
-        //フォームのデータ 
-        this.originalData = data;
-
-        //dataの各要素をFormクラスのプロパティとして登録する
-        for (var field in this.originalData) {
-            this[field] = this.originalData[field];
-        }
-
-        //エラー情報を管理するプロパティ
-        this.errors = new Errors();
-    }
-
-    /**
-     * Formのデータをサーバーに送信するよ！
-     */
-
-
-    _createClass(Form, [{
-        key: 'submit',
-        value: function submit() {
-            var _this = this;
-
-            //プロパティの値を再設定する
-            for (var field in this.originalData) {
-                this.originalData[field] = this[field];
-            }
-            axios.post('/thread', this.originalData)
-            //HTTPリクエストが成功したとき
-            .then(function (response) {
-                return _this.onSuccess(response.data);
-            })
-            //HTTPリクエエストが失敗した時
-            .catch(function (error) {
-                return _this.onFail(error.response.data.errors);
-            });
-        }
-    }, {
-        key: 'push',
-        value: function push() {
-
-            /**
-             * だめなパターン
-             */
-
-            setTimeout(function () {
-                console.log('洗剤を買いに行く');
-            }, 3000);
-
-            setTimeout(function () {
-                console.log('洗濯機を回す');
-            }, 1000);
-
-            setTimeout(function () {
-                console.log('洗濯ものを干す');
-            }, 2000);
-
-            var time = new Time();
-            //非同期処理
-            //time.general(this.afterGeneral);
-
-            /*
-            time.general(
-                function () {
-                   setTimeout(function(){
-                       console.log('after General');
-                       setTimeout(function(){
-                            console.log('after after General');
-                       },1000)
-                   },1000) 
-                }
-            );
-            */
-            console.log('we wish  after hello  but it isnt');
-        }
-    }, {
-        key: 'afterGeneral',
-        value: function afterGeneral(callback) {
-            console.log('after General');
-            //callback();
-        }
-    }, {
-        key: 'afterAfterGeneral',
-        value: function afterAfterGeneral() {
-            console.log('after after General');
-        }
-
-        /**
-         * フォームデータの送信が成功した場合
-         */
-
-    }, {
-        key: 'onSuccess',
-        value: function onSuccess(response) {
-            //エラーの情報をクリア
-            this.errors.reset();
-        }
-
-        /**
-         * フォームデータの送信が失敗した場合
-         */
-
-    }, {
-        key: 'onFail',
-        value: function onFail(error) {
-            this.errors.record(error);
-        }
-    }]);
-
-    return Form;
-}();
 
 /***/ }),
-/* 39 */
-/***/ (function(module, exports) {
+/* 49 */
+/***/ (function(module, exports, __webpack_require__) {
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+// style-loader: Adds some css to the DOM by adding a <style> tag
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+// load the styles
+var content = __webpack_require__(50);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(51)("69cd1d0a", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-685747f4\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0&bustCache!./drop.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-685747f4\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0&bustCache!./drop.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
 
-/**
- * エラー情報を管理するクラスだよ！
- */
-module.exports = function () {
-  function Errors() {
-    _classCallCheck(this, Errors);
+/***/ }),
+/* 50 */
+/***/ (function(module, exports, __webpack_require__) {
 
-    //エラー情報を管理するプロパティ
-    this.errors = {};
+exports = module.exports = __webpack_require__(45)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "\n.drop {\n  width: 50%;\n  border: 1px solid;\n  border-style: dashed;\n  border-radius: 3px;\n  padding: 30px;\n}\n.drop__default-container {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-pack: center;\n        -ms-flex-pack: center;\n            justify-content: center;\n}\n.drop__input {\n    display: none;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 51 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*
+  MIT License http://www.opensource.org/licenses/mit-license.php
+  Author Tobias Koppers @sokra
+  Modified by Evan You @yyx990803
+*/
+
+var hasDocument = typeof document !== 'undefined'
+
+if (typeof DEBUG !== 'undefined' && DEBUG) {
+  if (!hasDocument) {
+    throw new Error(
+    'vue-style-loader cannot be used in a non-browser environment. ' +
+    "Use { target: 'node' } in your Webpack config to indicate a server-rendering environment."
+  ) }
+}
+
+var listToStyles = __webpack_require__(52)
+
+/*
+type StyleObject = {
+  id: number;
+  parts: Array<StyleObjectPart>
+}
+
+type StyleObjectPart = {
+  css: string;
+  media: string;
+  sourceMap: ?string
+}
+*/
+
+var stylesInDom = {/*
+  [id: number]: {
+    id: number,
+    refs: number,
+    parts: Array<(obj?: StyleObjectPart) => void>
   }
+*/}
 
-  /**
-   * @param {*} errors :axiosのerror.response.data、つまりエラー時のレスポンスのbodyを設定するんだよ
-   */
+var head = hasDocument && (document.head || document.getElementsByTagName('head')[0])
+var singletonElement = null
+var singletonCounter = 0
+var isProduction = false
+var noop = function () {}
 
+// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+// tags it will allow on a page
+var isOldIE = typeof navigator !== 'undefined' && /msie [6-9]\b/.test(navigator.userAgent.toLowerCase())
 
-  _createClass(Errors, [{
-    key: "record",
-    value: function record(errors) {
-      this.errors = errors;
+module.exports = function (parentId, list, _isProduction) {
+  isProduction = _isProduction
+
+  var styles = listToStyles(parentId, list)
+  addStylesToDom(styles)
+
+  return function update (newList) {
+    var mayRemove = []
+    for (var i = 0; i < styles.length; i++) {
+      var item = styles[i]
+      var domStyle = stylesInDom[item.id]
+      domStyle.refs--
+      mayRemove.push(domStyle)
     }
-
-    /**
-     * レスポンスデータのbody部分のエラーメッセージを返すよ
-     *
-     * @param {*} name :string コントロールの名前
-     * @returns {string}
-     */
-
-  }, {
-    key: "get",
-    value: function get(field) {
-      if (this.errors[field]) {
-        return this.errors[field][0];
+    if (newList) {
+      styles = listToStyles(parentId, newList)
+      addStylesToDom(styles)
+    } else {
+      styles = []
+    }
+    for (var i = 0; i < mayRemove.length; i++) {
+      var domStyle = mayRemove[i]
+      if (domStyle.refs === 0) {
+        for (var j = 0; j < domStyle.parts.length; j++) {
+          domStyle.parts[j]()
+        }
+        delete stylesInDom[domStyle.id]
       }
     }
+  }
+}
 
-    /**
-     * エラークラスにfieldにセットされたエラーがあるか調べるよ
-     * @param {*} field 
-     * @returns {boolean}
-     */
-
-  }, {
-    key: "has",
-    value: function has(field) {
-      return this.errors.hasOwnProperty(field);
+function addStylesToDom (styles /* Array<StyleObject> */) {
+  for (var i = 0; i < styles.length; i++) {
+    var item = styles[i]
+    var domStyle = stylesInDom[item.id]
+    if (domStyle) {
+      domStyle.refs++
+      for (var j = 0; j < domStyle.parts.length; j++) {
+        domStyle.parts[j](item.parts[j])
+      }
+      for (; j < item.parts.length; j++) {
+        domStyle.parts.push(addStyle(item.parts[j]))
+      }
+      if (domStyle.parts.length > item.parts.length) {
+        domStyle.parts.length = item.parts.length
+      }
+    } else {
+      var parts = []
+      for (var j = 0; j < item.parts.length; j++) {
+        parts.push(addStyle(item.parts[j]))
+      }
+      stylesInDom[item.id] = { id: item.id, refs: 1, parts: parts }
     }
+  }
+}
 
-    /**
-     * filedで指定されたプロパティを削除するよ　
-     * @param {string} field 
-     */
+function createStyleElement () {
+  var styleElement = document.createElement('style')
+  styleElement.type = 'text/css'
+  head.appendChild(styleElement)
+  return styleElement
+}
 
-  }, {
-    key: "clear",
-    value: function clear(field) {
-      delete this.errors[field];
+function addStyle (obj /* StyleObjectPart */) {
+  var update, remove
+  var styleElement = document.querySelector('style[data-vue-ssr-id~="' + obj.id + '"]')
+
+  if (styleElement) {
+    if (isProduction) {
+      // has SSR styles and in production mode.
+      // simply do nothing.
+      return noop
+    } else {
+      // has SSR styles but in dev mode.
+      // for some reason Chrome can't handle source map in server-rendered
+      // style tags - source maps in <style> only works if the style tag is
+      // created and inserted dynamically. So we remove the server rendered
+      // styles and inject new ones.
+      styleElement.parentNode.removeChild(styleElement)
     }
-
-    /**
-     * エラー情報の要素を全部消すよ
-     */
-
-  }, {
-    key: "reset",
-    value: function reset() {
-      this.errors = {};
-    }
-  }]);
-
-  return Errors;
-}();
-
-/***/ }),
-/* 40 */
-/***/ (function(module, exports) {
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-module.exports = function () {
-  function Time() {
-    _classCallCheck(this, Time);
   }
 
-  _createClass(Time, [{
-    key: 'general',
-    value: function general(callback) {
-      //これがファイルを読み込む非同期の関数だとする。
-      setTimeout(function () {
-        console.log('General');
-        callback();
-      }, 3000);
+  if (isOldIE) {
+    // use singleton mode for IE9.
+    var styleIndex = singletonCounter++
+    styleElement = singletonElement || (singletonElement = createStyleElement())
+    update = applyToSingletonTag.bind(null, styleElement, styleIndex, false)
+    remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true)
+  } else {
+    // use multi-style-tag mode in all other cases
+    styleElement = createStyleElement()
+    update = applyToTag.bind(null, styleElement)
+    remove = function () {
+      styleElement.parentNode.removeChild(styleElement)
     }
-  }]);
+  }
 
-  return Time;
-}();
+  update(obj)
+
+  return function updateStyle (newObj /* StyleObjectPart */) {
+    if (newObj) {
+      if (newObj.css === obj.css &&
+          newObj.media === obj.media &&
+          newObj.sourceMap === obj.sourceMap) {
+        return
+      }
+      update(obj = newObj)
+    } else {
+      remove()
+    }
+  }
+}
+
+var replaceText = (function () {
+  var textStore = []
+
+  return function (index, replacement) {
+    textStore[index] = replacement
+    return textStore.filter(Boolean).join('\n')
+  }
+})()
+
+function applyToSingletonTag (styleElement, index, remove, obj) {
+  var css = remove ? '' : obj.css
+
+  if (styleElement.styleSheet) {
+    styleElement.styleSheet.cssText = replaceText(index, css)
+  } else {
+    var cssNode = document.createTextNode(css)
+    var childNodes = styleElement.childNodes
+    if (childNodes[index]) styleElement.removeChild(childNodes[index])
+    if (childNodes.length) {
+      styleElement.insertBefore(cssNode, childNodes[index])
+    } else {
+      styleElement.appendChild(cssNode)
+    }
+  }
+}
+
+function applyToTag (styleElement, obj) {
+  var css = obj.css
+  var media = obj.media
+  var sourceMap = obj.sourceMap
+
+  if (media) {
+    styleElement.setAttribute('media', media)
+  }
+
+  if (sourceMap) {
+    // https://developer.chrome.com/devtools/docs/javascript-debugging
+    // this makes source maps inside style tags work properly in Chrome
+    css += '\n/*# sourceURL=' + sourceMap.sources[0] + ' */'
+    // http://stackoverflow.com/a/26603875
+    css += '\n/*# sourceMappingURL=data:application/json;base64,' + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + ' */'
+  }
+
+  if (styleElement.styleSheet) {
+    styleElement.styleSheet.cssText = css
+  } else {
+    while (styleElement.firstChild) {
+      styleElement.removeChild(styleElement.firstChild)
+    }
+    styleElement.appendChild(document.createTextNode(css))
+  }
+}
+
 
 /***/ }),
-/* 41 */
+/* 52 */
 /***/ (function(module, exports) {
 
-module.exports = function (file) {
-    return new Promise(function (resolve, reject) {
-        var reader = new FileReader();
+/**
+ * Translates the list format produced by css-loader into something
+ * easier to manipulate.
+ */
+module.exports = function listToStyles (parentId, list) {
+  var styles = []
+  var newStyles = {}
+  for (var i = 0; i < list.length; i++) {
+    var item = list[i]
+    var id = item[0]
+    var css = item[1]
+    var media = item[2]
+    var sourceMap = item[3]
+    var part = {
+      id: parentId + ':' + i,
+      css: css,
+      media: media,
+      sourceMap: sourceMap
+    }
+    if (!newStyles[id]) {
+      styles.push(newStyles[id] = { id: id, parts: [part] })
+    } else {
+      newStyles[id].parts.push(part)
+    }
+  }
+  return styles
+}
 
-        //読み込み終わったあとのイベント
-        reader.onload = function () {
-            var text = reader.result;
-
-            console.log('readEnd');
-            resolve(text);
-        };
-
-        //読み込み開始
-        console.log('readFile');
-        reader.readAsText(file);
-    });
-};
 
 /***/ }),
-/* 42 */
+/* 53 */
 /***/ (function(module, exports) {
 
-module.exports = function (url) {
-    return new Promise(function (resolve, reject) {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", url);
-        xhr.send();
+/* globals __VUE_SSR_CONTEXT__ */
 
-        //リクエストを受信したときのイベント
-        xhr.onload = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                resolve(xhr.responseText);
-            } else {
-                reject('リクエストに失敗しているよ');
+// IMPORTANT: Do NOT use ES2015 features in this file.
+// This module is a runtime utility for cleaner component module output and will
+// be included in the final webpack user bundle.
+
+module.exports = function normalizeComponent (
+  rawScriptExports,
+  compiledTemplate,
+  functionalTemplate,
+  injectStyles,
+  scopeId,
+  moduleIdentifier /* server only */
+) {
+  var esModule
+  var scriptExports = rawScriptExports = rawScriptExports || {}
+
+  // ES6 modules interop
+  var type = typeof rawScriptExports.default
+  if (type === 'object' || type === 'function') {
+    esModule = rawScriptExports
+    scriptExports = rawScriptExports.default
+  }
+
+  // Vue.extend constructor export interop
+  var options = typeof scriptExports === 'function'
+    ? scriptExports.options
+    : scriptExports
+
+  // render functions
+  if (compiledTemplate) {
+    options.render = compiledTemplate.render
+    options.staticRenderFns = compiledTemplate.staticRenderFns
+    options._compiled = true
+  }
+
+  // functional template
+  if (functionalTemplate) {
+    options.functional = true
+  }
+
+  // scopedId
+  if (scopeId) {
+    options._scopeId = scopeId
+  }
+
+  var hook
+  if (moduleIdentifier) { // server build
+    hook = function (context) {
+      // 2.3 injection
+      context =
+        context || // cached call
+        (this.$vnode && this.$vnode.ssrContext) || // stateful
+        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
+      // 2.2 with runInNewContext: true
+      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
+        context = __VUE_SSR_CONTEXT__
+      }
+      // inject component styles
+      if (injectStyles) {
+        injectStyles.call(this, context)
+      }
+      // register component module identifier for async chunk inferrence
+      if (context && context._registeredComponents) {
+        context._registeredComponents.add(moduleIdentifier)
+      }
+    }
+    // used by ssr in case component is cached and beforeCreate
+    // never gets called
+    options._ssrRegister = hook
+  } else if (injectStyles) {
+    hook = injectStyles
+  }
+
+  if (hook) {
+    var functional = options.functional
+    var existing = functional
+      ? options.render
+      : options.beforeCreate
+
+    if (!functional) {
+      // inject component registration as beforeCreate hook
+      options.beforeCreate = existing
+        ? [].concat(existing, hook)
+        : [hook]
+    } else {
+      // for template-only hot-reload because in that case the render fn doesn't
+      // go through the normalizer
+      options._injectStyles = hook
+      // register for functioal component in vue file
+      options.render = function renderWithStyleInjection (h, context) {
+        hook.call(context)
+        return existing(h, context)
+      }
+    }
+  }
+
+  return {
+    esModule: esModule,
+    exports: scriptExports,
+    options: options
+  }
+}
+
+
+/***/ }),
+/* 54 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    methods: {
+        onDrop: function onDrop(event) {
+            var fileList = event.target.files ? event.target.files : event.dataTransfer.files;
+
+            var files = [];
+
+            for (var i = 0; i < fileList.length; i++) {
+                files.push(fileList[i]);
             }
-        };
-    });
-};
 
-/***/ }),
-/* 43 */
-/***/ (function(module, exports) {
-
-module.exports = function (text) {
-    return new Promise(function (resolve, reject) {
-        console.log('start');
-        var count = (text.match(new RegExp('おはんき', 'g')) || []).length;
-
-        //チェックがOKだったら
-        if (count > 0) {
-            resolve();
-        } else {
-            reject('ファイルの内容がおかしいよ');
+            //イベントsend-fileを発火させて、files変数を渡す
+            this.$emit('send-file', files);
         }
-    });
-};
+    },
+    mounted: function mounted() {
+        console.log('Component mounted.');
+    }
+});
 
 /***/ }),
-/* 44 */
-/***/ (function(module, exports) {
+/* 55 */
+/***/ (function(module, exports, __webpack_require__) {
 
-// removed by extract-text-webpack-plugin
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    {
+      staticClass: "drop",
+      on: {
+        dragleave: function($event) {
+          $event.preventDefault()
+        },
+        dragover: function($event) {
+          $event.preventDefault()
+        },
+        drop: function($event) {
+          $event.preventDefault()
+          _vm.onDrop($event)
+        }
+      }
+    },
+    [
+      _c("div", { staticClass: "drop__default-container" }, [
+        _c("label", [
+          _vm._v(" ファイルを選択\n            "),
+          _c("input", {
+            staticClass: "drop__input",
+            attrs: { type: "file", multiple: "multiple" },
+            on: { change: _vm.onDrop }
+          })
+        ])
+      ])
+    ]
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-685747f4", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);
