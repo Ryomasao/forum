@@ -1,14 +1,45 @@
-
 .content-header{
     width: 100%;
     height: $headerHeight;
     position: fixed;
     top:0;
     background: $subColor; 
-    display: flex;
-    justify-content: flex-end;
+}
 
-    &__item{
-        margin:10px;
+.nav{
+    position: relative;
+
+    &__button:checked ~ &__content{
+        transform: translateX(0%);
+    }
+
+    &__button-hidden{
+        display: none;
+    }
+
+    &__content{
+        position: fixed;
+        top:$headerHeight;
+        left:0;
+        height: 100%;
+        width:300px;
+        background:$subColor;
+        transform: translateX(-105%);
+        transition: .3s ease-in-out;
+    }
+}
+
+.burger{
+    display: block;
+    margin-top:15px;
+    margin-left:5px;
+
+    &__line{
+        display: block;
+         border-radius: 3px;
+         background: white;
+         width: 25px;
+         height: 3px;
+         margin-top:3px;
     }
 }

@@ -493,16 +493,53 @@ template {
   position: fixed;
   top: 0;
   background: #383a3f;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: end;
-      -ms-flex-pack: end;
-          justify-content: flex-end;
 }
 
-.content-header__item {
-  margin: 10px;
+.nav {
+  position: relative;
+}
+
+.nav__button:checked ~ .nav__content {
+  -webkit-transform: translateX(0%);
+          transform: translateX(0%);
+}
+
+.nav__button-hidden {
+  display: none;
+}
+
+.nav__content {
+  position: fixed;
+  top: 40px;
+  left: 0;
+  height: 100%;
+  width: 300px;
+  background: #383a3f;
+  -webkit-transform: translateX(-105%);
+          transform: translateX(-105%);
+  -webkit-transition: .3s ease-in-out;
+  transition: .3s ease-in-out;
+}
+
+.burger {
+  display: block;
+  margin-top: 15px;
+  margin-left: 5px;
+}
+
+.burger__line {
+  display: block;
+  border-radius: 3px;
+  background: white;
+  width: 25px;
+  height: 3px;
+  margin-top: 3px;
+}
+
+.side-menu {
+  width: 300px;
+  height: 100%;
+  background: #383a3f;
 }
 
 .toggle {
@@ -679,6 +716,12 @@ body {
 body {
   font-family: "Sawarabi Gothic";
   background: #6AAFE6;
+}
+
+.app {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
 }
 
 .container {

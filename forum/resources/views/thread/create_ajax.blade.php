@@ -2,6 +2,7 @@
 @section('content')
 <div class="container justfy-center">
     <!--Submitのデフォルトイベントをキャンセルして、VueインスタンスのonSubmitメソッドを呼ぶ-->
+    <p>このページはpromiseの勉強もかねていた気がする</p>
     <form class="simple-form" action="/thread" method="post" v-on:submit.prevent="onSubmit" @keydown="form.errors.clear($event.target.name)" v-on:drop.prevent v-on:dragover.prevent>
         {{csrf_field()}}
         <div class="img-wrapper">

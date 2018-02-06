@@ -1,8 +1,9 @@
 @include('../components/header')
 <body>
     @include('../components/content-header')
-    @include('../components/side-menu')
-    @yield('content')
+    <div class="app">
+        @yield('content')
+    </div>
     @include('../components/footer')
 </body>
 </html>

@@ -5,6 +5,7 @@
 @import "components/variables";
 //hedaer
 @import "components/content-header";
+@import "components/side-menu";
 //トグルボタン
 @import "components/toggle";
 //Threadの素材はここに書く
@@ -23,6 +24,10 @@ html,body{
 body{
     font-family: "Sawarabi Gothic";
     background: #6AAFE6;
+}
+
+.app{
+    display: flex;
 }
 
 .container{

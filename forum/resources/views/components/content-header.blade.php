@@ -1,14 +1,17 @@
 <!--コンテンツのヘッダ -->
 <div class="content-header">
-    <div class="content-header__item">
-        <!-- Postする際のタイプ -->
-        <!--
-        <div class="toggle">
-            <label class="toggle__left" for="toggle-right">Normal</label>
-            <input class="toggle__radio" type="radio" name="post-type" id="toggle-right">
-            <label class="toggle__right" for="toggle-left">Vue</label>
-            <input class="toggle__radio" type="radio" name="post-type" id="toggle-left"> 
+    <div class="nav">
+        <input type="checkbox" id="nav-open" class="nav__button-hidden nav__button">
+        <label class="burger" for="nav-open">
+            <span class="burger__line"></span>
+            <span class="burger__line"></span>
+            <span class="burger__line"></span>
+        </label>
+        <div class="nav__content">
+           <ul>
+            <li><a href="{{ route('threads') }}">スレッド一覧</a></li>
+            <li><a href="{{ route('files') }}">ファイル一覧</a></li>
+           </ul> 
         </div>
-        -->
     </div>
 </div>
